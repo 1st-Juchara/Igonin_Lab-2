@@ -19,7 +19,8 @@ struct Pipe {
 struct CS {
     int id = 0;
     string name = "";
-    vector <bool> WS;
+    int WS;
+    int WSOff;
     int payoff = 0;
 };
 
@@ -37,6 +38,24 @@ void inputString(istream& in, string& str)
 {
     in.ignore(10000, '\n');
     getline(in, str);
+}
+
+bool inString(string str_where, string str_what)
+{
+    bool state = false;
+    if (str_what.size() == 0)
+        state = true;
+    else
+        for (int i = 0; i < str_where.size() - str_what.size() + 1; i++)
+        {
+            int cnt = 0;
+            for (int j = 0; j < str_what.size(); j++)
+                if (str_where[i + j] == str_what[j])
+                    cnt++;
+            state = cnt == str_what.size();
+            break;
+        }
+    return state;
 }
 
 float tryInputNum(float min, float max) {
@@ -63,15 +82,80 @@ int tryChoose(int min, int max) {
     return num;
 }
 
+vector <int> filterPipes(const vector <Pipe>& pipes)
+{
+    vector <int> index;
+    string name;
+    int status = -1;
+    cout << "1. Choose by filter \n2. Display all";
+    if (tryChoose(1, 2) == 1)
+    {
+        cout << "1. Search by name \n2. All names";
+        if (tryChoose(1, 2) == 1)
+        {
+            cout << "Name: ";
+            inputString(cin, name);
+            cout << endl;
+        }
+
+        cout << "1. Search by status \n2. Any status";
+        if (tryChoose(1, 2) == 1)
+        {
+            cout << "1. EXPLOITED \n2. IN REPAIR";
+            status = tryChoose(1, 2) - 1;
+        }
+
+        for (int i = 0; i < pipes.size(); i++)
+            if (inString(pipes[i].name, name) and ((pipes[i].inRepare == bool(status)) or (status == -1)))
+                index.push_back(i);
+    }
+    else
+        for (int i = 0; i < pipes.size(); i++)
+            index.push_back(i);
+    return index;
+}
+
+vector <int> filterCS(const vector <CS>& Stations)
+{
+    vector <int> index;
+    string name;
+    int workshops = -1;
+    cout << "1. Choose by filter \n2. Display all";
+    if (tryChoose(1, 2) == 1)
+    {
+        cout << "1. Search by name \n2. All names";
+        if (tryChoose(1, 2) == 1)
+        {
+            cout << "Name: ";
+            inputString(cin, name);
+            cout << endl;
+        }
+
+        cout << "1. Search by worksops status \n2. Any status";
+        if (tryChoose(1, 2) == 1)
+        {
+            cout << "Choose minimal percantage works (0%..100%)";
+            workshops = tryChoose(0, 100);
+        }
+
+        for (int i = 0; i < Stations.size(); i++)
+            if (inString(Stations[i].name, name) and (((Stations[i].WS - Stations[i].WSOff)/workshops*100 >= workshops) or (workshops == -1)))
+                index.push_back(i);
+    }
+    else
+        for (int i = 0; i < Stations.size(); i++)
+            index.push_back(i);
+    return index;
+}
+
 int Menu() {
-    std::cout << "1. Add pipe \n2. Add CS \n3. Objects \n4. Edit pipe \n5. Edit CS \n6. Save \n7. Load \n8. Exit";
-    int number = tryChoose(1, 8);
+    std::cout << "1. Add pipe \n2. Add CS \n3. View pipes \n4. View CS \n5. Edit pipe \n6. Edit CS \n7. Save \n8. Load \n9. Exit";
+    int number = tryChoose(1, 9);
     return number;
 }
 
 void ViewPipe(const Pipe& pipe)
 {
-    cout << "Pipe" << endl;
     cout << "\t\t" << "Name: " << pipe.name << endl;
     cout << "\t\t" << "Length: " << pipe.length << endl;
     cout << "\t\t" << "Diameter: " << pipe.diameter << endl;
@@ -83,24 +167,32 @@ void ViewPipe(const Pipe& pipe)
 
 void ViewCS(const CS& Stations)
 {
-    cout << "Stations" << endl;
     cout << "\t\t" << "Name: " << Stations.name << endl;
-    cout << "\t\t" << "Number of workshops: " << Stations.WS.size() << endl;
+    cout << "\t\t" << "Workshops online: " << Stations.WS << endl;
+    cout << "\t\t" << "Workshops offline: " << Stations.WSOff << endl;
     cout << "\t\t" << "Payoff: " << Stations.payoff << endl;
-    for (int j = 0; j < Stations.WS.size(); j++)
-        if (Stations.WS[j])
-            cout << "\t\t WS " << j + 1 << ". ON" << endl;
-        else
-            cout << "\t\t WS " << j + 1 << ". OFF" << endl;
+    cout << endl;
 }
 
-void View(const vector <Pipe> &pipes, const vector <CS> &Stations) { //+
+void ViewPipes(const vector <Pipe> &pipes) { //+
     if (isExist(pipes))
-        for (int i = 0; i < pipes.size(); i++)
-                ViewPipe(pipes[i]);
+    {
+        vector <int> index = filterPipes(pipes);
+        cout << "Pipes:" << endl;
+        for (int i = 0; i < index.size(); i++)
+            ViewPipe(pipes[index[i]]);
+    }
+    cout << endl;
+}
+
+void ViewStations(const vector <CS>& Stations) {
     if (isExist(Stations))
-        for (int i = 0; i < Stations.size(); i++)
-                ViewCS(Stations[i]);
+    {
+        vector <int> index = filterCS(Stations);
+        cout << "Stations:" << endl;
+        for (int i = 0; i < index.size(); i++)
+            ViewCS(Stations[index[i]]);
+    }
     cout << endl;
 }
 
@@ -126,43 +218,37 @@ void addCS(vector <CS> &Stations) { // +
     cout << endl;
     std::cout << "Enter count of workshops: ";
     int workshops = tryChoose(1, 10000);
-    vector <bool> wsStatus;
-    wsStatus.resize(workshops);
-    fill(wsStatus.begin(), wsStatus.end(), true);
     std::cout << "Enter station productivity (1..100): ";
     int prod = tryChoose(1, 100);
-    Stations.push_back({id, name, wsStatus, prod });
+    Stations.push_back({id, name, workshops, prod });
 }
 
 void editPipe(vector <Pipe> &pipes) { // ?
-    if (pipes.size() > 0) {
-        cout << pipes[0].name << endl;
-        cout << "\tPipe status:" << endl;
-        cout << "\t\t1. UNDER REPAIR \n\t\t2. IS FUNCTIONING";
-        pipes[0].inRepare = tryChoose(1, 2) == 1;
+    if (isExist(pipes)) {
+        vector <int> index = filterPipes(pipes);
+        for (int i = 0; i < index.size(); i++)
+        {
+            cout << pipes[0].name << endl;
+            cout << "\tPipe status:" << endl;
+            cout << "\t\t1. UNDER REPAIR \n\t\t2. IS FUNCTIONING";
+            pipes[0].inRepare = tryChoose(1, 2) == 1;
+        }
     }
 }
 
 void editCS(vector <CS> &Stations) { // ?
     if (Stations.size() > 0)
     {
-        cout << Stations[0].name << endl;
-        cout << "\tPayoff: " << Stations[0].payoff << endl;
-        cout << "\tWorkshops: " << Stations[0].payoff << endl;
-        for (int i = 0; i < Stations[0].WS.size(); i++)
-            if (Stations[0].WS[i])
-                cout << "\t\t" << i + 1 << ". WS is ON" << endl;
-            else
-                cout << "\t\t" << i + 1 << ". WS is OFF" << endl;
-        cout << endl;
-        cout << "";
-        cout << "Number of WS for editing:";
-        int WScount = tryChoose(1, Stations[0] .WS.size());
-        for (int i = 0; i < WScount; i++)
+        vector <int> index = filterCS(Stations);
+        for (int i = 0; i < index.size(); i++)
         {
-            cout << "Enter index of WS for editing:";
-            int WSindex = tryChoose(1, Stations[0].WS.size());
-            Stations[0].WS[WSindex - 1] = !Stations[0].WS[WSindex - 1];
+            cout << Stations[index[i]].name << endl;
+            cout << "\tPayoff: " << Stations[index[i]].payoff << endl;
+            cout << "\tWorkshops: " << Stations[index[i]].payoff << endl;
+            cout << "1. Turn off workshops" << endl << "2. Turn on workshops";
+            int inst = tryChoose(1, 2);
+            cout << "How many?";
+            int delta = inst == 1 ? tryChoose(0, Stations[index[i]].WS) : tryChoose(0, Stations[index[i]].WSOff);
         }
     }
 }
@@ -183,12 +269,7 @@ void CSDataOut(ofstream& fout, const vector <CS>& Stations) //+
     for (int i = 0; i < Stations.size(); i++)
     {
         fout << Stations[i].name << endl;
-        fout << Stations[i].payoff << ' ' << Stations[i].WS.size();
-        for (int j = 0; j < Stations[i].WS.size(); j++)
-        {
-            fout << ' ' << Stations[i].WS[j];
-        }
-        fout << endl;
+        fout << Stations[i].id << ' ' << Stations[i].WS << ' ' << Stations[i].WSOff << ' ' << Stations[i].payoff << endl;
     }
 }
 
@@ -228,6 +309,7 @@ void PipeDataIn(ifstream& in, vector <Pipe>& pipes)
     in >> pipesCnt;
     for  (int i = 0; i < pipesCnt; i++)
     {
+        in.ignore(10000, '\n');
         Pipe pipe;
         getline(in, pipe.name);
         in >> pipe.id;
@@ -244,18 +326,13 @@ void CSDataIn(ifstream& in, vector <CS>& Stations)
     in >> StationsCnt;
     for (int i = 0; i < StationsCnt; i++)
     {
+        in.ignore(10000, '\n');
         CS Station;
         getline(in, Station.name);
+        in >> Station.id;
         in >> Station.payoff;
-        int WScount = 0;
-        in >> WScount;
-        Station.WS.resize(WScount);
-        for (int j = 0; j < WScount; j++)
-        {
-            bool ws = true;
-            in >> ws;
-            Station.WS[j] = ws;
-        }
+        in >> Station.WS;
+        in >> Station.WSOff;
         Stations.push_back(Station);
     }
 }
@@ -290,21 +367,24 @@ int main()
             addCS(Stations);
             break;
         case 3:
-            View(pipes, Stations);
+            ViewPipes(pipes);
             break;
         case 4:
-            editPipe(pipes);
+            ViewStations(Stations);
             break;
         case 5:
-            editCS(Stations);
+            editPipe(pipes);
             break;
         case 6:
-            Save(pipes, Stations);
+            editCS(Stations);
             break;
         case 7:
-            Load(pipes, Stations);
+            Save(pipes, Stations);
             break;
         case 8:
+            Load(pipes, Stations);
+            break;
+        case 9:
             return 0;
             break;
         default:
