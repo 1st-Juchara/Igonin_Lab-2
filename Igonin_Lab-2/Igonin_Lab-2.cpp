@@ -220,7 +220,7 @@ void addCS(vector <CS> &Stations) { // +
     int workshops = tryChoose(1, 10000);
     std::cout << "Enter station productivity (1..100): ";
     int prod = tryChoose(1, 100);
-    Stations.push_back({id, name, workshops, prod });
+    Stations.push_back({id, name, workshops, 0, prod });
 }
 
 void editPipe(vector <Pipe> &pipes) { // ?
