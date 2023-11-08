@@ -19,8 +19,8 @@ struct Pipe {
 struct CS {
     int id = 0;
     string name = "";
-    int WS;
-    int WSOff;
+    int WSCnt;
+    int WSOn;
     int payoff = 0;
 };
 
@@ -52,8 +52,11 @@ bool inString(string str_where, string str_what)
             for (int j = 0; j < str_what.size(); j++)
                 if (str_where[i + j] == str_what[j])
                     cnt++;
-            state = cnt == str_what.size();
-            break;
+            if (cnt == str_what.size())
+            {
+                state = true;
+                break;
+            }
         }
     return state;
 }
@@ -134,12 +137,12 @@ vector <int> filterCS(const vector <CS>& Stations)
         cout << "1. Search by worksops status \n2. Any status";
         if (tryChoose(1, 2) == 1)
         {
-            cout << "Choose minimal percantage works (0%..100%)";
+            cout << "Choose percantage of online ws (0%..100%)";
             workshops = tryChoose(0, 100);
         }
 
         for (int i = 0; i < Stations.size(); i++)
-            if (inString(Stations[i].name, name) and (((Stations[i].WS - Stations[i].WSOff)/workshops*100 >= workshops) or (workshops == -1)))
+            if (inString(Stations[i].name, name) and ((Stations[i].WSOn/Stations[i].WSCnt*100 == workshops) or (workshops == -1)))
                 index.push_back(i);
     }
     else
@@ -168,8 +171,8 @@ void ViewPipe(const Pipe& pipe)
 void ViewCS(const CS& Stations)
 {
     cout << "\t\t" << "Name: " << Stations.name << endl;
-    cout << "\t\t" << "Workshops online: " << Stations.WS << endl;
-    cout << "\t\t" << "Workshops offline: " << Stations.WSOff << endl;
+    cout << "\t\t" << "Number of workshops: " << Stations.WSCnt << endl;
+    cout << "\t\t" << "Workshops online: " << Stations.WSOn << endl;
     cout << "\t\t" << "Payoff: " << Stations.payoff << endl;
     cout << endl;
 }
@@ -223,33 +226,127 @@ void addCS(vector <CS> &Stations) { // +
     Stations.push_back({id, name, workshops, 0, prod });
 }
 
-void editPipe(vector <Pipe> &pipes) { // ?
+void changePipe(vector <Pipe>& pipes, const vector <int>& index) {
+    cout << "1. Change pipe status\n2. Delete pipe";
+    int number = tryChoose(1, 2);
+    if (number == 1)
+    {
+        cout << "Pipe status:" << endl;
+        cout << "\t1. UNDER REPAIR \n\t2. IS FUNCTIONING";
+        bool status = tryChoose(1, 2) == 1;
+        for (int i = 0; i < index.size(); i++)
+            pipes[index[i]].inRepare = status;
+    } 
+    else
+        for (int i = index.size() - 1; i >= 0; i--)
+            pipes.erase(pipes.begin() + index[i]);
+}
+
+void changeCS(vector <CS>& Stations, const vector <int>& index) {
+
+    cout << "1. Change WS status\n2. Delete CS";
+    int number = tryChoose(1, 2);
+    if (number == 1)
+    {
+        cout << "1. Turn off workshops" << endl << "2. Turn on workshops";
+        int inst = tryChoose(1, 2) == 1;
+        cout << "How many?";
+        int delta = tryChoose(0, 999999);
+        for (int i = 0; i < index.size(); i++)
+        {
+            Stations[index[i]].WSOn = inst ? delta > Stations[index[i]].WSOn ? 0 : Stations[index[i]].WSOn - delta :
+                delta + Stations[index[i]].WSOn > Stations[index[i]].WSCnt ? Stations[index[i]].WSCnt : delta + Stations[index[i]].WSOn;
+        }
+    }
+    else
+        for (int i = index.size() - 1; i >= 0; i--)
+            Stations.erase(Stations.begin() + index[i]);
+}
+
+void enterInterval(const vector <int>& index, vector <int>& index_ch) {
+    cout << "Choose first element index";
+    int f_index = tryChoose(1, index.size());
+    cout << "Choose last element index";
+    int l_index = tryChoose(1, index.size());
+
+    if (f_index > l_index)
+    {
+        int t = f_index;
+        f_index = l_index;
+        l_index = t;
+    }
+
+    for (int i = f_index - 1; i < l_index; i++)
+        index_ch.push_back(index[i]);
+}
+
+void enterPacket(const vector <int>& index, vector <int>& index_ch) {
+    cout << "Enter count of elements";
+    int pipes_cnt = tryChoose(1, index.size());
+
+    for (int i = 0; i < pipes_cnt; i++)
+    {
+        cout << "Enter pipes index";
+        int index_sel = tryChoose(1, index.size()) - 1;
+        bool t = false;
+        for (int j = 0; j < index_ch.size(); j++)
+            t = index_sel == index_ch[j] ? true || t : false || t;
+        if (!t)
+            index_ch.push_back(index_sel);
+    }
+}
+
+void enterElement(const vector <int>& index, vector <int>& index_ch) {
+    cout << "Enter pipe index";
+    index_ch.push_back(tryChoose(1, index.size()) - 1);
+}
+
+void choosingElements(const vector <int>& index, vector <int>& index_ch) {
+    cout << "1. Choose interval of elements" << endl << "2. Choose several elements" << endl << "3. Choose a single element";
+    int number = tryChoose(1, 3);
+    switch (number)
+    {
+    case 1:
+        enterInterval(index, index_ch);
+        break;
+    case 2:
+        enterPacket(index, index_ch);
+        break;
+    case 3:
+        enterElement(index, index_ch);
+        break;
+    default:
+        break;
+    }
+}
+
+void editPipes(vector <Pipe> &pipes) { // +
     if (isExist(pipes)) {
         vector <int> index = filterPipes(pipes);
         for (int i = 0; i < index.size(); i++)
         {
-            cout << pipes[0].name << endl;
-            cout << "\tPipe status:" << endl;
-            cout << "\t\t1. UNDER REPAIR \n\t\t2. IS FUNCTIONING";
-            pipes[0].inRepare = tryChoose(1, 2) == 1;
+            cout << "pipe " << i+1 << endl;
+            ViewPipe(pipes[index[i]]);
         }
+        vector <int> index_ch;
+        choosingElements(index, index_ch);
+        changePipe(pipes, index_ch);
     }
 }
 
 void editCS(vector <CS> &Stations) { // ?
-    if (Stations.size() > 0)
-    {
+    if (isExist(Stations)) {
         vector <int> index = filterCS(Stations);
         for (int i = 0; i < index.size(); i++)
         {
-            cout << Stations[index[i]].name << endl;
-            cout << "\tPayoff: " << Stations[index[i]].payoff << endl;
-            cout << "\tWorkshops: " << Stations[index[i]].payoff << endl;
-            cout << "1. Turn off workshops" << endl << "2. Turn on workshops";
-            int inst = tryChoose(1, 2);
-            cout << "How many?";
-            int delta = inst == 1 ? tryChoose(0, Stations[index[i]].WS) : tryChoose(0, Stations[index[i]].WSOff);
+            cout << "Station " << i + 1 << endl;
+            ViewCS(Stations[index[i]]);
         }
+        cout << "1. Choose interval of CS" << endl << "2. Choose several CS" << endl << "3. Choose a single CS";
+        vector <int> index_ch;
+        int number = tryChoose(1, 3);
+        choosingElements(index, index_ch);
+        changeCS(Stations, index_ch);
     }
 }
 
@@ -269,7 +366,7 @@ void CSDataOut(ofstream& fout, const vector <CS>& Stations) //+
     for (int i = 0; i < Stations.size(); i++)
     {
         fout << Stations[i].name << endl;
-        fout << Stations[i].id << ' ' << Stations[i].WS << ' ' << Stations[i].WSOff << ' ' << Stations[i].payoff << endl;
+        fout << Stations[i].id << ' ' << Stations[i].WSCnt << ' ' << Stations[i].WSOn << ' ' << Stations[i].payoff << endl;
     }
 }
 
@@ -331,8 +428,8 @@ void CSDataIn(ifstream& in, vector <CS>& Stations)
         getline(in, Station.name);
         in >> Station.id;
         in >> Station.payoff;
-        in >> Station.WS;
-        in >> Station.WSOff;
+        in >> Station.WSCnt;
+        in >> Station.WSOn;
         Stations.push_back(Station);
     }
 }
@@ -373,7 +470,7 @@ int main()
             ViewStations(Stations);
             break;
         case 5:
-            editPipe(pipes);
+            editPipes(pipes);
             break;
         case 6:
             editCS(Stations);
