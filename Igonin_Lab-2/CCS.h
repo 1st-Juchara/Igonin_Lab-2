@@ -4,13 +4,13 @@
 #include <vector>
 #include <fstream>
 
-class Pipe
+class CS
 {
 public:
     int id = 0;
     std::string name = "";
-    float length = 0;
-    float diameter = 0;
-    bool inRepare = false;
+    int WSCnt;
+    int WSOn;
+    int payoff = 0;
 };
 

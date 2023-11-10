@@ -127,7 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CCS.cpp" />
+    <ClCompile Include="CPipe.cpp" />
     <ClCompile Include="Igonin_Lab-2.cpp" />
+    <ClCompile Include="SubFunc.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CCS.h" />
+    <ClInclude Include="CPipe.h" />
+    <ClInclude Include="SubFunc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
