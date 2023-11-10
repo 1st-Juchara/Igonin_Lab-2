@@ -42,7 +42,7 @@ vector<int> Pipes::filterPipes()
 
 void Pipes::ViewPipe(const Pipe& pipe)
 {
-    cout << "\t\t" << "Name: " << pipe.name << endl;
+    cout << "\t\t" << "Name: " << pipe.name << ' ' << pipe.id << endl;
     cout << "\t\t" << "Length: " << pipe.length << endl;
     cout << "\t\t" << "Diameter: " << pipe.diameter << endl;
     if (pipe.inRepare)
@@ -65,7 +65,10 @@ void Pipes::changePipe(const vector<int>& index)
     }
     else
         for (int i = index.size() - 1; i >= 0; i--)
+        {
+            ID_lost.push_back(pipes[index[i]].id);
             pipes.erase(pipes.begin() + index[i]);
+        }
 }
 
 bool Pipes::isExist()
@@ -86,7 +89,13 @@ void Pipes::ViewPipes() { //+
 
 void Pipes::addPipe()
 {
-    int id = rand() % 9000000 + 1000000;
+    int id = 0;
+    if (ID_lost.size() == 0)
+        id = ++ID_max;
+    else {
+        id = ID_lost[ID_lost.size() - 1];
+        ID_lost.pop_back();
+    }
     cout << "Enter pipe name:\n\n> ";
     string name;
     inputString(cin, name);
@@ -115,6 +124,12 @@ void Pipes::editPipes()
 
 void Pipes::PipesDataOut(std::ofstream& fout)
 {
+    fout << ID_max << ' ';
+    fout << ID_lost.size() << ' ';
+    for (int i = 0; i < ID_lost.size(); i++)
+    {
+        fout << ID_lost[i] << ' ';
+    }
     fout << pipes.size() << endl;
     for (int i = 0; i < pipes.size(); i++)
     {
@@ -125,6 +140,16 @@ void Pipes::PipesDataOut(std::ofstream& fout)
 
 void Pipes::PipeDataIn(std::ifstream& in)
 {
+    in >> ID_max;
+    int ID_lost_cnt;
+    in >> ID_lost_cnt;
+    for (int i = 0; i < ID_lost_cnt; i++)
+    {
+        in.ignore(10000, '\n');
+        int ID;
+        in >> ID;
+        ID_lost.push_back(ID);
+    }
     int pipesCnt = 0;
     in >> pipesCnt;
     for (int i = 0; i < pipesCnt; i++)

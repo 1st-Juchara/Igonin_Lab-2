@@ -14,6 +14,10 @@ class Pipes
         float diameter = 0;
         bool inRepare = false;
     };
+
+    int ID_max = 0;
+    std::vector <int> ID_lost;
+
     std::vector <Pipe> pipes;
     std::vector <int> filterPipes();
     void ViewPipe(const Pipe& pipe);

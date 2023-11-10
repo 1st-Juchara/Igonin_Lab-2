@@ -14,6 +14,10 @@ class CSs
         int WSOn;
         int payoff = 0;
 	};
+    
+    int ID_max = 0;
+    std::vector <int> ID_lost;
+
     std::vector <CS> Stations;
     std::vector <int> filterCS();
     void ViewCS(const CS& Stations);

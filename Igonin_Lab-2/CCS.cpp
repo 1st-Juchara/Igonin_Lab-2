@@ -42,7 +42,7 @@ vector<int> CSs::filterCS()
 
 void CSs::ViewCS(const CS& Stations)
 {
-    cout << "\t\t" << "Name: " << Stations.name << endl;
+    cout << "\t\t" << "Name: " << Stations.name << ' ' << Stations.id << endl;
     cout << "\t\t" << "Number of workshops: " << Stations.WSCnt << endl;
     cout << "\t\t" << "Workshops online: " << Stations.WSOn << endl;
     cout << "\t\t" << "Payoff: " << Stations.payoff << endl;
@@ -67,7 +67,10 @@ void CSs::changeCS(const vector<int>& index)
     }
     else
         for (int i = index.size() - 1; i >= 0; i--)
+        {
+            ID_lost.push_back(Stations[index[i]].id);
             Stations.erase(Stations.begin() + index[i]);
+        }
 }
 
 bool CSs::isExist()
@@ -89,8 +92,14 @@ void CSs::ViewStations()
 
 void CSs::addCS()
 {
+    int id = 0;
+    if (ID_lost.size() == 0)
+        id = --ID_max;
+    else {
+        id = ID_lost[ID_lost.size() - 1];
+        ID_lost.pop_back();
+    }
     int wsOn = 0;
-    int id = rand() % 9000000 + 1000000;
     std::cout << "Enter CS name:\n\n> ";
     string name;
     inputString(cin, name);
@@ -119,6 +128,12 @@ void CSs::editCS()
 
 void CSs::CSDataOut(std::ofstream& fout)
 {
+    fout << ID_max << ' ';
+    fout << ID_lost.size() << ' ';
+    for (int i = 0; i < ID_lost.size(); i++)
+    {
+        fout << ID_lost[i] << ' ';
+    }
     fout << Stations.size() << endl;
     for (int i = 0; i < Stations.size(); i++)
     {
@@ -129,6 +144,16 @@ void CSs::CSDataOut(std::ofstream& fout)
 
 void CSs::CSDataIn(std::ifstream& in)
 {
+    in >> ID_max;
+    int ID_lost_cnt;
+    in >> ID_lost_cnt;
+    for (int i = 0; i < ID_lost_cnt; i++)
+    {
+        in.ignore(10000, '\n');
+        int ID;
+        in >> ID;
+        ID_lost.push_back(ID);
+    }
     int StationsCnt = 0;
     in >> StationsCnt;
     for (int i = 0; i < StationsCnt; i++)
