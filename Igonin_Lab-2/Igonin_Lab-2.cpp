@@ -10,38 +10,38 @@
 
 using namespace std;
 
-vector <int> filterPipes(const vector <Pipe>& pipes)
-{
-    vector <int> index;
-    string name;
-    int status = -1;
-    cout << "1. Choose by filter \n2. Display all";
-    if (tryChoose(1, 2) == 1)
-    {
-        cout << "1. Search by name \n2. All names";
-        if (tryChoose(1, 2) == 1)
-        {
-            cout << "Name: ";
-            inputString(cin, name);
-            cout << endl;
-        }
-
-        cout << "1. Search by status \n2. Any status";
-        if (tryChoose(1, 2) == 1)
-        {
-            cout << "1. EXPLOITED \n2. IN REPAIR";
-            status = tryChoose(1, 2) - 1;
-        }
-
-        for (int i = 0; i < pipes.size(); i++)
-            if (inString(pipes[i].name, name) and ((pipes[i].inRepare == bool(status)) or (status == -1)))
-                index.push_back(i);
-    }
-    else
-        for (int i = 0; i < pipes.size(); i++)
-            index.push_back(i);
-    return index;
-}
+//vector <int> filterPipes(const vector <Pipe>& pipes)
+//{
+//    vector <int> index;
+//    string name;
+//    int status = -1;
+//    cout << "1. Choose by filter \n2. Display all";
+//    if (tryChoose(1, 2) == 1)
+//    {
+//        cout << "1. Search by name \n2. All names";
+//        if (tryChoose(1, 2) == 1)
+//        {
+//            cout << "Name: ";
+//            inputString(cin, name);
+//            cout << endl;
+//        }
+//
+//        cout << "1. Search by status \n2. Any status";
+//        if (tryChoose(1, 2) == 1)
+//        {
+//            cout << "1. EXPLOITED \n2. IN REPAIR";
+//            status = tryChoose(1, 2) - 1;
+//        }
+//
+//        for (int i = 0; i < pipes.size(); i++)
+//            if (inString(pipes[i].name, name) and ((pipes[i].inRepare == bool(status)) or (status == -1)))
+//                index.push_back(i);
+//    }
+//    else
+//        for (int i = 0; i < pipes.size(); i++)
+//            index.push_back(i);
+//    return index;
+//}
 
 vector <int> filterCS(const vector <CS>& Stations)
 {
@@ -82,16 +82,16 @@ int Menu() {
     return number;
 }
 
-void ViewPipe(const Pipe& pipe)
-{
-    cout << "\t\t" << "Name: " << pipe.name << endl;
-    cout << "\t\t" << "Length: " << pipe.length << endl;
-    cout << "\t\t" << "Diameter: " << pipe.diameter << endl;
-    if (pipe.inRepare)
-        cout << "\t\t" << "Status: IN REPAIR" << endl;
-    else
-        cout << "\t\t" << "Status: EXPLOITED \n" << endl;
-}
+//void ViewPipe(const Pipe& pipe)
+//{
+//    cout << "\t\t" << "Name: " << pipe.name << endl;
+//    cout << "\t\t" << "Length: " << pipe.length << endl;
+//    cout << "\t\t" << "Diameter: " << pipe.diameter << endl;
+//    if (pipe.inRepare)
+//        cout << "\t\t" << "Status: IN REPAIR" << endl;
+//    else
+//        cout << "\t\t" << "Status: EXPLOITED \n" << endl;
+//}
 
 void ViewCS(const CS& Stations)
 {
@@ -102,16 +102,16 @@ void ViewCS(const CS& Stations)
     cout << endl;
 }
 
-void ViewPipes(const vector <Pipe> &pipes) { //+
-    if (isExist(pipes))
-    {
-        vector <int> index = filterPipes(pipes);
-        cout << "Pipes:" << endl;
-        for (int i = 0; i < index.size(); i++)
-            ViewPipe(pipes[index[i]]);
-    }
-    cout << endl;
-}
+//void ViewPipes(const vector <Pipe> &pipes) { //+
+//    if (isExist(pipes))
+//    {
+//        vector <int> index = filterPipes(pipes);
+//        cout << "Pipes:" << endl;
+//        for (int i = 0; i < index.size(); i++)
+//            ViewPipe(pipes[index[i]]);
+//    }
+//    cout << endl;
+//}
 
 void ViewStations(const vector <CS>& Stations) {
     if (isExist(Stations))
@@ -124,18 +124,18 @@ void ViewStations(const vector <CS>& Stations) {
     cout << endl;
 }
 
-void addPipe(vector <Pipe> &pipes) { // +
-    int id = rand() % 9000000 + 1000000;
-    cout << "Enter pipe name:\n\n> ";
-    string name;
-    inputString(cin, name);
-    cout << endl;
-    cout << "Enter pipe length:";
-    float length = tryInputNum(0, INT_MAX);
-    cout << "Enter pipe diameter: ";
-    float diameter = tryInputNum(0, INT_MAX);
-    pipes.push_back({id, name, length, diameter , false});
-}
+//void addPipe(vector <Pipe> &pipes) { // +
+//    int id = rand() % 9000000 + 1000000;
+//    cout << "Enter pipe name:\n\n> ";
+//    string name;
+//    inputString(cin, name);
+//    cout << endl;
+//    cout << "Enter pipe length:";
+//    float length = tryInputNum(0, INT_MAX);
+//    cout << "Enter pipe diameter: ";
+//    float diameter = tryInputNum(0, INT_MAX);
+//    pipes.push_back({id, name, length, diameter , false});
+//}
 
 void addCS(vector <CS> &Stations) { // +
     int wsOn = 0;
@@ -151,21 +151,21 @@ void addCS(vector <CS> &Stations) { // +
     Stations.push_back({id, name, workshops, 0, prod });
 }
 
-void changePipe(vector <Pipe>& pipes, const vector <int>& index) {
-    cout << "1. Change pipe status\n2. Delete pipe";
-    int number = tryChoose(1, 2);
-    if (number == 1)
-    {
-        cout << "Pipe status:" << endl;
-        cout << "\t1. UNDER REPAIR \n\t2. IS FUNCTIONING";
-        bool status = tryChoose(1, 2) == 1;
-        for (int i = 0; i < index.size(); i++)
-            pipes[index[i]].inRepare = status;
-    } 
-    else
-        for (int i = index.size() - 1; i >= 0; i--)
-            pipes.erase(pipes.begin() + index[i]);
-}
+//void changePipe(vector <Pipe>& pipes, const vector <int>& index) {
+//    cout << "1. Change pipe status\n2. Delete pipe";
+//    int number = tryChoose(1, 2);
+//    if (number == 1)
+//    {
+//        cout << "Pipe status:" << endl;
+//        cout << "\t1. UNDER REPAIR \n\t2. IS FUNCTIONING";
+//        bool status = tryChoose(1, 2) == 1;
+//        for (int i = 0; i < index.size(); i++)
+//            pipes[index[i]].inRepare = status;
+//    } 
+//    else
+//        for (int i = index.size() - 1; i >= 0; i--)
+//            pipes.erase(pipes.begin() + index[i]);
+//}
 
 void changeCS(vector <CS>& Stations, const vector <int>& index) {
 
@@ -188,21 +188,22 @@ void changeCS(vector <CS>& Stations, const vector <int>& index) {
             Stations.erase(Stations.begin() + index[i]);
 }
 
-void editPipes(vector <Pipe> &pipes) { // +
-    if (isExist(pipes)) {
-        vector <int> index = filterPipes(pipes);
-        for (int i = 0; i < index.size(); i++)
-        {
-            cout << "pipe " << i+1 << endl;
-            ViewPipe(pipes[index[i]]);
-        }
-        vector <int> index_ch;
-        choosingElements(index, index_ch);
-        changePipe(pipes, index_ch);
-    }
-}
+//void editPipes(vector <Pipe> &pipes) 
+//{ // +
+//    if (isExist(pipes)) {
+//        vector <int> index = filterPipes(pipes);
+//        for (int i = 0; i < index.size(); i++)
+//        {
+//            cout << "pipe " << i+1 << endl;
+//            ViewPipe(pipes[index[i]]);
+//        }
+//        vector <int> index_ch;
+//        choosingElements(index, index_ch);
+//        changePipe(pipes, index_ch);
+//    }
+//}
 
-void editCS(vector <CS> &Stations) { // ?
+void editCS(vector <CS> &Stations) { // +
     if (isExist(Stations)) {
         vector <int> index = filterCS(Stations);
         for (int i = 0; i < index.size(); i++)
@@ -218,15 +219,15 @@ void editCS(vector <CS> &Stations) { // ?
     }
 }
 
-void PipesDataOut(ofstream& fout, const vector <Pipe>& pipes) //+
-{
-    fout << pipes.size() << endl;
-    for (int i = 0; i < pipes.size(); i++)
-    {
-        fout << pipes[i].name << endl;
-        fout << pipes[i].id << ' ' << pipes[i].length << ' ' << pipes[i].diameter << ' ' << pipes[i].inRepare << endl;
-    }
-}
+//void PipesDataOut(ofstream& fout, const vector <Pipe>& pipes) //+
+//{
+//    fout << pipes.size() << endl;
+//    for (int i = 0; i < pipes.size(); i++)
+//    {
+//        fout << pipes[i].name << endl;
+//        fout << pipes[i].id << ' ' << pipes[i].length << ' ' << pipes[i].diameter << ' ' << pipes[i].inRepare << endl;
+//    }
+//}
 
 void CSDataOut(ofstream& fout, const vector <CS>& Stations) //+
 {
@@ -238,16 +239,16 @@ void CSDataOut(ofstream& fout, const vector <CS>& Stations) //+
     }
 }
 
-void Save(const vector <Pipe>& pipes, const vector <CS>& Stations)
+void Save(Pipes& pipes, const vector <CS>& Stations)
 {
     ofstream fout("Saves.txt", ios_base::out | ios_base::trunc);// out - открыте для записи, trunc - удаление содержимого, ios_base - класс для всех потоковых классов ввода-вывода
     if (fout.is_open())
     {
-        if (isExist(pipes) || isExist(Stations))
+        if (pipes.isExist() || isExist(Stations))
         {
-            if (isExist(pipes))
+            if (pipes.isExist())
             {
-                PipesDataOut(fout, pipes);
+                pipes.PipesDataOut(fout);
             }
             else
                 fout << 0 << endl;
@@ -268,22 +269,22 @@ void Save(const vector <Pipe>& pipes, const vector <CS>& Stations)
         cout << "Error: save was failed";
 }
 
-void PipeDataIn(ifstream& in, vector <Pipe>& pipes)
-{
-    int pipesCnt = 0;
-    in >> pipesCnt;
-    for  (int i = 0; i < pipesCnt; i++)
-    {
-        in.ignore(10000, '\n');
-        Pipe pipe;
-        getline(in, pipe.name);
-        in >> pipe.id;
-        in >> pipe.length;
-        in >> pipe.diameter;
-        in >> pipe.inRepare;
-        pipes.push_back(pipe);
-    }
-}
+//void PipeDataIn(ifstream& in, vector <Pipe>& pipes)
+//{
+//    int pipesCnt = 0;
+//    in >> pipesCnt;
+//    for  (int i = 0; i < pipesCnt; i++)
+//    {
+//        in.ignore(10000, '\n');
+//        Pipe pipe;
+//        getline(in, pipe.name);
+//        in >> pipe.id;
+//        in >> pipe.length;
+//        in >> pipe.diameter;
+//        in >> pipe.inRepare;
+//        pipes.push_back(pipe);
+//    }
+//}
 
 void CSDataIn(ifstream& in, vector <CS>& Stations)
 {
@@ -302,12 +303,12 @@ void CSDataIn(ifstream& in, vector <CS>& Stations)
     }
 }
 
-void Load(vector <Pipe>& pipes, vector <CS>& Stations) // Несостыковочка сохр. и загр.
+void Load(Pipes& pipes, vector <CS>& Stations) // Несостыковочка сохр. и загр.
 {
     ifstream fin("Saves.txt");
     if (fin.is_open())
     {
-        PipeDataIn(fin, pipes);
+        pipes.PipeDataIn(fin);
         CSDataIn(fin, Stations);
         fin.close();
         cout << "Load completed" << endl;
@@ -319,26 +320,26 @@ void Load(vector <Pipe>& pipes, vector <CS>& Stations) // Несостыково
 
 int main()
 {
-    vector <Pipe> pipes;
+    Pipes pipes;
     vector <CS> Stations;
     while (true) {
         int number = Menu();
         switch (number)
         {
         case 1:
-            addPipe(pipes);
+            pipes.addPipe();
             break;
         case 2:
             addCS(Stations);
             break;
         case 3:
-            ViewPipes(pipes);
+            pipes.ViewPipes();
             break;
         case 4:
             ViewStations(Stations);
             break;
         case 5:
-            editPipes(pipes);
+            pipes.editPipes();
             break;
         case 6:
             editCS(Stations);

@@ -9,10 +9,10 @@
 
 using namespace std;
 
-bool isExist(const vector<Pipe>& pipes)
-{
-    return pipes.size() > 0 ? true : false;
-}
+//bool isExist(const vector<Pipe>& pipes)
+//{
+//    return pipes.size() > 0 ? true : false;
+//}
 
 bool isExist(const vector <CS>& Stations)
 {
