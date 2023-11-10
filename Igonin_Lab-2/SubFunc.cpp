@@ -3,21 +3,9 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include "CPipe.h"
-#include "CCS.h"
 #include "SubFunc.h"
 
 using namespace std;
-
-//bool isExist(const vector<Pipe>& pipes)
-//{
-//    return pipes.size() > 0 ? true : false;
-//}
-
-bool isExist(const vector <CS>& Stations)
-{
-    return Stations.size() > 0 ? true : false;
-}
 
 void inputString(istream& in, string& str)
 {

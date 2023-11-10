@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include "CPipe.h"
+#include "Pipes.h"
 #include "SubFunc.h"
 
 using namespace std;

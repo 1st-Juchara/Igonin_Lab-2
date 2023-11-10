@@ -133,8 +133,8 @@
     <ClCompile Include="SubFunc.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CCS.h" />
-    <ClInclude Include="CPipe.h" />
+    <ClInclude Include="CSs.h" />
+    <ClInclude Include="Pipes.h" />
     <ClInclude Include="SubFunc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

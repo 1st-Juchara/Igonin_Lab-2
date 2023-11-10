@@ -29,13 +29,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CPipe.h">
+    <ClInclude Include="Pipes.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="SubFunc.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="CCS.h">
+    <ClInclude Include="CSs.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

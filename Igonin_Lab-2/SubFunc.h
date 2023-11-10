@@ -3,12 +3,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include "CCS.h"
-//#include "CPipe.h"
-
-//bool isExist(const std::vector <Pipe>& pipes);// *
-
-bool isExist(const std::vector <CS>& Stations);// *
 
 void inputString(std::istream& in, std::string& str);
 
