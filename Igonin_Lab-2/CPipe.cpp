@@ -76,7 +76,9 @@ bool Pipes::isExist()
 	return pipes.size() > 0 ? true : false;;
 }
 
-void Pipes::ViewPipes() { //+
+void Pipes::ViewPipes() 
+{
+    #pragma message("Pipes viewing");
     if (isExist())
     {
         vector <int> index = filterPipes();
@@ -89,6 +91,8 @@ void Pipes::ViewPipes() { //+
 
 void Pipes::addPipe()
 {
+    #pragma message("Add pipe");
+    
     int id = 0;
     if (ID_lost.size() == 0)
         id = ++ID_max;
@@ -99,6 +103,7 @@ void Pipes::addPipe()
     cout << "Enter pipe name:\n\n> ";
     string name;
     inputString(cin, name);
+    #pragma message("Enter name " + string(name));
     cout << endl;
     cout << "Enter pipe length:";
     float length = tryInputNum(0, INT_MAX);

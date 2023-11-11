@@ -1,15 +1,16 @@
-﻿// Lab-1.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
+﻿
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
+#include <chrono>
+#include <format>
 #include "CSs.h"
 #include "Pipes.h"
 #include "SubFunc.h"
 
 using namespace std;
+using namespace chrono;
 
 int Menu() {
     std::cout << "1. Add pipe \n2. Add CS \n3. View pipes \n4. View CS \n5. Edit pipe \n6. Edit CS \n7. Save \n8. Load \n9. Exit";
@@ -19,7 +20,8 @@ int Menu() {
 
 void Save(Pipes& pipes, CSs& Stations)
 {
-    ofstream fout("Saves.txt", ios_base::out | ios_base::trunc);// out - открыте для записи, trunc - удаление содержимого, ios_base - класс для всех потоковых классов ввода-вывода
+    string name = chooseFiles("C:/U4Oba/ALG_Yaz/Igonin_Lab_2/Igonin_Lab-2/Igonin_Lab-2/Saves");
+    ofstream fout("Saves/"+name, ios_base::out | ios_base::trunc);// out - открыте для записи, trunc - удаление содержимого, ios_base - класс для всех потоковых классов ввода-вывода
     if (fout.is_open())
     {
         if (pipes.isExist() || Stations.isExist())
@@ -36,7 +38,7 @@ void Save(Pipes& pipes, CSs& Stations)
             }
             else
                 fout << 0 << endl;
-            cout << "Save completed" << endl;
+            cout << "\nSave completed" << endl;
         }
         else
             cout << "Nothing to save" << endl;
@@ -49,13 +51,14 @@ void Save(Pipes& pipes, CSs& Stations)
 
 void Load(Pipes& pipes, CSs& Stations) // Несостыковочка сохр. и загр.
 {
-    ifstream fin("Saves.txt");
+    string name = chooseFiles("C:/U4Oba/ALG_Yaz/Igonin_Lab_2/Igonin_Lab-2/Igonin_Lab-2/Saves");
+    ifstream fin("Saves/"+name);
     if (fin.is_open())
     {
         pipes.PipeDataIn(fin);
         Stations.CSDataIn(fin);
         fin.close();
-        cout << "Load completed" << endl;
+        cout << "\nLoad completed" << endl;
     }
     else
         cout << "Error: can't find save file" << endl;
@@ -64,6 +67,12 @@ void Load(Pipes& pipes, CSs& Stations) // Несостыковочка сохр.
 
 int main()
 {
+    redirect_output_wrapper cerr_out(cerr);
+    string time = format("{:%d_%m_%Y %H_%M_%OS}", system_clock::now() + hours(3));
+    ofstream logfile("Logs/log_" + time + ".txt");
+    if (logfile)
+        cerr_out.redirect(logfile);
+
     Pipes pipes;
     CSs Stations;
     while (true) {

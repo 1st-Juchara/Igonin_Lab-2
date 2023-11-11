@@ -1,8 +1,4 @@
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
 #include "SubFunc.h"
 
 using namespace std;
@@ -11,6 +7,7 @@ void inputString(istream& in, string& str)
 {
     in.ignore(10000, '\n');
     getline(in, str);
+    cerr << str << endl;
 }
 
 bool inString(string str_where, string str_what)
@@ -43,6 +40,7 @@ float tryInputNum(float min, float max) {
         cout << "\n\n> ";
     }
     cout << endl;
+    cerr << num << endl;
     return num;
 }
 
@@ -55,6 +53,7 @@ int tryChoose(int min, int max) {
         cout << "\n> ";
     }
     cout << endl;
+    cerr << num << endl;
     return num;
 }
 
@@ -113,4 +112,15 @@ void choosingElements(const vector <int>& index, vector <int>& index_ch) {
     default:
         break;
     }
+}
+
+string chooseFiles(const std::string& path)
+{
+    cout << "Choose file:\n" << endl;
+    for (const auto& entry : filesystem::directory_iterator(path))
+        cout << entry.path().filename() << endl;
+    string name;
+    cout << "\n> ";
+    inputString(cin, name);
+    return name;
 }
