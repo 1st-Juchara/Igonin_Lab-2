@@ -10,7 +10,7 @@ using namespace std;
 vector<int> CSs::filterCS()
 {
     vector <int> index;
-    string name;
+    string name = "";
     int workshops = -1;
     cout << "1. Choose by filter \n2. Display all";
     if (tryChoose(1, 2) == 1)
@@ -24,14 +24,40 @@ vector<int> CSs::filterCS()
         }
 
         cout << "1. Search by worksops status \n2. Any status";
+
+        int number;
+        auto percent_choose = [&number, &workshops](int x) -> bool {
+            switch (number)
+            {
+            case 1:
+                return x >= workshops;
+                break;
+            case 2:
+                return x <= workshops;
+                break;
+            case 3:
+                return x == workshops;
+                break;
+            default:
+                return false;
+                break;
+            }
+            };
+
         if (tryChoose(1, 2) == 1)
         {
             cout << "Choose percantage of online ws (0%..100%)";
             workshops = tryChoose(0, 100);
+
+            cout << "Choose selection method:" << endl
+                << "1. More than the selected percentage" << endl
+                << "2. Less than the selected percentage" << endl
+                << "3. According the selected percentage";
+            number = tryChoose(1, 3);
         }
 
         for (int i = 0; i < Stations.size(); i++)
-            if (inString(Stations[i].name, name) and ((Stations[i].WSOn / Stations[i].WSCnt * 100 == workshops) or (workshops == -1)))
+            if (((workshops == -1) or percent_choose(Stations[i].WSOn * 100 / Stations[i].WSCnt)) and inString(Stations[i].name, name))
                 index.push_back(i);
     }
     else
@@ -68,7 +94,6 @@ void CSs::changeCS(const vector<int>& index)
     else
         for (int i = index.size() - 1; i >= 0; i--)
         {
-            ID_lost.push_back(Stations[index[i]].id);
             Stations.erase(Stations.begin() + index[i]);
         }
 }
@@ -87,18 +112,11 @@ void CSs::ViewStations()
         for (int i = 0; i < index.size(); i++)
             ViewCS(Stations[index[i]]);
     }
-    cout << endl;
 }
 
 void CSs::addCS()
 {
-    int id = 0;
-    if (ID_lost.size() == 0)
-        id = --ID_max;
-    else {
-        id = ID_lost[ID_lost.size() - 1];
-        ID_lost.pop_back();
-    }
+    int id = --ID_max;
     int wsOn = 0;
     std::cout << "Enter CS name:\n\n> ";
     string name;
@@ -129,11 +147,6 @@ void CSs::editCS()
 void CSs::CSDataOut(std::ofstream& fout)
 {
     fout << ID_max << ' ';
-    fout << ID_lost.size() << ' ';
-    for (int i = 0; i < ID_lost.size(); i++)
-    {
-        fout << ID_lost[i] << ' ';
-    }
     fout << Stations.size() << endl;
     for (int i = 0; i < Stations.size(); i++)
     {
@@ -145,15 +158,6 @@ void CSs::CSDataOut(std::ofstream& fout)
 void CSs::CSDataIn(std::ifstream& in)
 {
     in >> ID_max;
-    int ID_lost_cnt;
-    in >> ID_lost_cnt;
-    for (int i = 0; i < ID_lost_cnt; i++)
-    {
-        in.ignore(10000, '\n');
-        int ID;
-        in >> ID;
-        ID_lost.push_back(ID);
-    }
     int StationsCnt = 0;
     in >> StationsCnt;
     for (int i = 0; i < StationsCnt; i++)
@@ -162,9 +166,9 @@ void CSs::CSDataIn(std::ifstream& in)
         CS Station;
         getline(in, Station.name);
         in >> Station.id;
-        in >> Station.payoff;
         in >> Station.WSCnt;
         in >> Station.WSOn;
+        in >> Station.payoff;
         Stations.push_back(Station);
     }
 }

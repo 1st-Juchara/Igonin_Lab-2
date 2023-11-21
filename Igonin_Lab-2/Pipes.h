@@ -16,7 +16,6 @@ class Pipes
     };
 
     int ID_max = 0;
-    std::vector <int> ID_lost;
 
     std::vector <Pipe> pipes;
     std::vector <int> filterPipes();

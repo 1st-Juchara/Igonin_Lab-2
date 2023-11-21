@@ -1,4 +1,6 @@
 #pragma once
+#include <cctype>    // std::tolower
+#include <algorithm> // std::equal
 #include <iostream>
 #include <string>
 #include <vector>

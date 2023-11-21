@@ -10,7 +10,7 @@ using namespace std;
 vector<int> Pipes::filterPipes()
 {
     vector <int> index;
-    string name;
+    string name = "";
     int status = -1;
     cout << "1. Choose by filter \n2. Display all";
     if (tryChoose(1, 2) == 1)
@@ -31,7 +31,7 @@ vector<int> Pipes::filterPipes()
         }
 
         for (int i = 0; i < pipes.size(); i++)
-            if (inString(pipes[i].name, name) and ((pipes[i].inRepare == bool(status)) or (status == -1)))
+            if (((pipes[i].inRepare == bool(status)) or (status == -1)) and inString(pipes[i].name, name))
                 index.push_back(i);
     }
     else
@@ -66,7 +66,6 @@ void Pipes::changePipe(const vector<int>& index)
     else
         for (int i = index.size() - 1; i >= 0; i--)
         {
-            ID_lost.push_back(pipes[index[i]].id);
             pipes.erase(pipes.begin() + index[i]);
         }
 }
@@ -93,13 +92,7 @@ void Pipes::addPipe()
 {
     #pragma message("Add pipe");
     
-    int id = 0;
-    if (ID_lost.size() == 0)
-        id = ++ID_max;
-    else {
-        id = ID_lost[ID_lost.size() - 1];
-        ID_lost.pop_back();
-    }
+    int id = ++ID_max;
     cout << "Enter pipe name:\n\n> ";
     string name;
     inputString(cin, name);
@@ -130,11 +123,6 @@ void Pipes::editPipes()
 void Pipes::PipesDataOut(std::ofstream& fout)
 {
     fout << ID_max << ' ';
-    fout << ID_lost.size() << ' ';
-    for (int i = 0; i < ID_lost.size(); i++)
-    {
-        fout << ID_lost[i] << ' ';
-    }
     fout << pipes.size() << endl;
     for (int i = 0; i < pipes.size(); i++)
     {
@@ -146,15 +134,6 @@ void Pipes::PipesDataOut(std::ofstream& fout)
 void Pipes::PipeDataIn(std::ifstream& in)
 {
     in >> ID_max;
-    int ID_lost_cnt;
-    in >> ID_lost_cnt;
-    for (int i = 0; i < ID_lost_cnt; i++)
-    {
-        in.ignore(10000, '\n');
-        int ID;
-        in >> ID;
-        ID_lost.push_back(ID);
-    }
     int pipesCnt = 0;
     in >> pipesCnt;
     for (int i = 0; i < pipesCnt; i++)

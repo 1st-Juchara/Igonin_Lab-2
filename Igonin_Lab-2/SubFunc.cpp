@@ -20,7 +20,7 @@ bool inString(string str_where, string str_what)
         {
             int cnt = 0;
             for (int j = 0; j < str_what.size(); j++)
-                if (str_where[i + j] == str_what[j])
+                if (tolower(static_cast<unsigned char>(str_where[i + j])) == tolower(static_cast<unsigned char>(str_what[j])))
                     cnt++;
             if (cnt == str_what.size())
             {

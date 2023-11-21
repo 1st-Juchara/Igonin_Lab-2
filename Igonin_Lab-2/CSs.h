@@ -16,7 +16,6 @@ class CSs
 	};
     
     int ID_max = 0;
-    std::vector <int> ID_lost;
 
     std::vector <CS> Stations;
     std::vector <int> filterCS();
